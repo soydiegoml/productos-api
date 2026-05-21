@@ -80,6 +80,6 @@ docker run -p 3000:3000 --env-file .env productos-api
 - **Express.js**
 - **Separación en capas**: `routes` (HTTP), `services` (lógica de negocio), `middlewares` (transversales).
 - **Variables de entorno** para toda configuración sensible o modificable: URL de la API, tasa de impuesto y umbral de stock — sin hardcodear valores.
-- **Resiliencia defensiva**: campos faltantes en un producto no abortan la respuesta completa; se usan `null` o defaults y el producto se incluye igual.
+- **Resiliencia**: campos faltantes en un producto no abortan la respuesta completa; se usan `null` o defaults y el producto se incluye igual.
 - El archivo `.env` no se sube al repositorio.
 - Se incluye `.env.example` como referencia para crear la configuración local.
