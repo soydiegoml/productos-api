@@ -1,0 +1,85 @@
+# Middleware de Catálogo y Precios
+
+Microservicio construido con **Node.js + Express** que consume el catálogo externo de DummyJSON, aplica lógica de negocio (impuesto del 16%, clasificación de stock) y expone los datos transformados y ordenado ordenados por price (de mayor a menor) vía REST.
+
+## Requisitos
+
+- Node.js >= 18
+- npm >= 9
+
+---
+
+## Instalación y ejecución local
+
+```bash
+# 1. Clonar el repositorio
+git clone <URL_DEL_REPO>
+cd productos-api
+
+# 2. Instalar dependencias
+npm install
+
+# 3. Configurar variables de entorno
+cp .env.example .env
+# Editar .env si necesitas cambiar el puerto u otros valores
+
+# 4. Levantar el servidor
+npm start
+
+# Para desarrollo con auto-reload:
+npm run dev
+```
+
+El servidor correrá en `http://localhost:3000`.
+
+---
+
+## Variables de entorno
+
+| Variable             | Descripción                              | Valor por defecto                                    |
+|----------------------|------------------------------------------|------------------------------------------------------|
+| `PORT`               | Puerto del servidor                      | `3000`                                               |
+| `EXTERNAL_API_URL`   | URL de la API externa de productos       | `https://dummyjson.com/products/search?q=phone`      |
+| `IVA`           | Tasa de impuesto a aplicar (decimal)     | `0.16`                                               |
+| `LOW_STOCK_THRESHOLD`| Umbral para considerar stock bajo        | `10`                                                 |
+
+---
+
+## Endpoints
+
+### `GET /api/catalogo`
+
+Devuelve el catálogo transformado, ordenado por precio final de mayor a menor.
+
+## Manejo de errores
+
+El servicio maneja los siguientes escenarios sin caer:
+
+- **API externa caída o sin conexión** → responde 500 con mensaje descriptivo
+- **Timeout** → responde 500 indicando que la API tardó demasiado
+- **Respuesta con formato inesperado** → no rompe el proceso
+- **Campos faltantes en un producto** → se usan valores por defecto, el producto no se descarta
+- **Ruta no encontrada** → responde 404
+
+---
+
+## Ejecución con Docker
+
+```bash
+# Construir la imagen
+docker build -t productos-api .
+
+# Correr el contenedor
+docker run -p 3000:3000 --env-file .env productos-api
+```
+
+---
+
+## Decisiones técnicas
+
+- **Express.js**
+- **Separación en capas**: `routes` (HTTP), `services` (lógica de negocio), `middlewares` (transversales).
+- **Variables de entorno** para toda configuración sensible o modificable: URL de la API, tasa de impuesto y umbral de stock — sin hardcodear valores.
+- **Resiliencia defensiva**: campos faltantes en un producto no abortan la respuesta completa; se usan `null` o defaults y el producto se incluye igual.
+- El archivo `.env` no se sube al repositorio.
+- Se incluye `.env.example` como referencia para crear la configuración local.
