@@ -56,7 +56,7 @@ Devuelve el catálogo transformado, ordenado por precio final de mayor a menor.
 El servicio maneja los siguientes escenarios sin caer:
 
 - **API externa caída o sin conexión** → responde 500 con mensaje descriptivo
-- **Timeout** → responde 500 indicando que la API tardó demasiado
+- **Timeout** → responde 504 indicando que la API tardó demasiado
 - **Respuesta con formato inesperado** → no rompe el proceso
 - **Campos faltantes en un producto** → se usan valores por defecto, el producto no se descarta
 - **Ruta no encontrada** → responde 404
